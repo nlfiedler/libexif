@@ -2,6 +2,12 @@
 name = "exif"
 version = "0.0.1"
 authors = ["David Cuddeback <david.cuddeback@gmail.com>"]
+description = "Rust wrapper for libexif"
+homepage = "https://gitlab.com/dcuddeback/exif"
+repository = "https://gitlab.com/dcuddeback/exif"
+license = "MIT"
+readme = "README.md"
+keywords = ["libexif", "EXIF", "image"]
 
 [dependencies]
 exif-sys = "0.1"
