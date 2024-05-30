@@ -12,18 +12,15 @@
 //! # use std::io;
 //! # use std::path::Path;
 //! fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
-//!     let data = try!(exif::Data::open("image.jpg"));
-//!
+//!     let data = libexif::Data::open("image.jpg")?;
 //!     for content in data.contents() {
 //!         println!("[{:=>32}{:=>46}]", format!(" {:?} ", content.ifd()), "");
-//!
 //!         for entry in content.entries() {
 //!             println!("  {:<30} = {}",
 //!                      entry.tag().title(content.ifd()),
 //!                      entry.text_value());
 //!         }
 //!     }
-//!
 //!     Ok(())
 //! }
 //! ```
