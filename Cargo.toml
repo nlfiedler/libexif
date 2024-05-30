@@ -1,14 +1,17 @@
 [package]
-name = "exif"
+name = "libexif"
 version = "0.0.1"
-authors = ["David Cuddeback <david.cuddeback@gmail.com>"]
-description = "Rust wrapper for libexif"
-homepage = "https://gitlab.com/dcuddeback/exif"
-repository = "https://gitlab.com/dcuddeback/exif"
-license = "MIT"
+authors = [
+    "David Cuddeback <david.cuddeback@gmail.com>",
+    "Nathan Fiedler nathanfiedler@fastmail.fm>",
+]
+description = "Safe Rust wrapper for the libexif C EXIF library."
+homepage = "https://github.com/nlfiedler/libexif"
+repository = "https://github.com/nlfiedler/libexif"
 readme = "README.md"
-keywords = ["libexif", "EXIF", "image"]
+license = "MIT"
+keywords = ["libexif", "exif", "image"]
 
 [dependencies]
-exif-sys = "0.1"
+libexif-sys = { git = "https://github.com/nlfiedler/libexif-sys.git" }
 libc = "0.2"

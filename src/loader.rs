@@ -1,8 +1,10 @@
-use libc::c_uint;
-use exif_sys::*;
-
+//
+// Copyright (c) 2016 David Cuddeback
+//
 use data::Data;
 use internal::*;
+use libc::c_uint;
+use libexif_sys::*;
 
 pub struct Loader {
     inner: *mut ExifLoader,
@@ -30,17 +32,12 @@ impl Loader {
 
         if !ptr.is_null() {
             Some(Data::from_libexif(ptr))
-        }
-        else {
+        } else {
             None
         }
     }
 
-    pub fn write_data(&mut self, data: &[u8]) -> bool {
-        unsafe {
-            exif_loader_write(self.inner,
-                              data.as_ptr(),
-                              data.len() as c_uint) != 0
-        }
+    pub fn write_data(&mut self, data: &mut [u8]) -> bool {
+        unsafe { exif_loader_write(self.inner, data.as_mut_ptr(), data.len() as c_uint) != 0 }
     }
 }

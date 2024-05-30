@@ -1,9 +1,12 @@
-#![feature(pub_restricted,conservative_impl_trait)]
-
-//! The `exif` crate provides a safe wrapper around the `libexif` C library. It provides the
-//! ability to read EXIF data from image files. The entry point for inspecting a file's EXIF data
-//! is [`Data::open()`](struct.Data.html#method.open). EXIF data can be inspected by iterating over
-//! the data's [`contents`](struct.Content.html) and [`entries`](struct.Entry.html):
+//
+// Copyright (c) 2016 David Cuddeback
+//
+//! The `exif` crate provides a safe wrapper around the `libexif` C library. It
+//! provides the ability to read EXIF data from image files. The entry point for
+//! inspecting a file's EXIF data is
+//! [`Data::open()`](struct.Data.html#method.open). EXIF data can be inspected
+//! by iterating over the data's [`contents`](struct.Content.html) and
+//! [`entries`](struct.Entry.html):
 //!
 //! ```
 //! # use std::io;
@@ -25,8 +28,10 @@
 //! }
 //! ```
 
-extern crate exif_sys;
+#![allow(non_upper_case_globals)]
+
 extern crate libc;
+extern crate libexif_sys;
 
 pub use bits::*;
 pub use content::*;

@@ -1,17 +1,14 @@
-extern crate exif;
+//
+// Copyright (c) 2016 David Cuddeback
+//
+extern crate libexif;
 
 use std::env;
 use std::io;
 use std::path::Path;
 
-fn main() {
-    for arg in env::args_os().skip(1) {
-        dump_exif(&arg).unwrap();
-    }
-}
-
 fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
-    let data = try!(exif::Data::open(file_name.as_ref()));
+    let data = libexif::Data::open(file_name.as_ref())?;
 
     println!("EXIF data for {:?}", file_name.as_ref());
     println!("  Encoding:   {:?}", data.encoding());
@@ -22,12 +19,20 @@ fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
             println!("[{:=>31}{:=>46}]", format!(" {:?} ", content.ifd()), "");
 
             for entry in content.entries() {
-                println!(" {:<30} = {}",
-                         entry.tag().title(content.ifd()),
-                         entry.text_value());
+                println!(
+                    " {:<30} = {}",
+                    entry.tag().title(content.ifd()),
+                    entry.text_value()
+                );
             }
         }
     }
 
     Ok(())
+}
+
+fn main() {
+    for arg in env::args_os().skip(1) {
+        dump_exif(&arg).unwrap();
+    }
 }

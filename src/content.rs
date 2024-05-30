@@ -1,11 +1,12 @@
+//
+// Copyright (c) 2016 David Cuddeback
+//
+use bits::*;
+use entry::Entry;
+use internal::*;
+use libexif_sys::*;
 use std::mem;
 use std::slice;
-
-use exif_sys::*;
-
-use entry::Entry;
-use bits::*;
-use internal::*;
 
 /// Container for all EXIF data in a single [IFD](enum.IFD.html).
 pub struct Content<'a> {
@@ -15,9 +16,7 @@ pub struct Content<'a> {
 impl<'a> Content<'a> {
     /// Return the IFD for the content.
     pub fn ifd(&self) -> IFD {
-        IFD::from_libexif(unsafe {
-            exif_content_get_ifd(self.inner as *const _ as *mut _)
-        })
+        IFD::from_libexif(unsafe { exif_content_get_ifd(self.inner as *const _ as *mut _) })
     }
 
     /// Return the number of [entries](struct.Entry.html) in the IFD.
@@ -26,11 +25,10 @@ impl<'a> Content<'a> {
     }
 
     /// Iterate over the [entries](struct.Entry.html) in the IFD.
-    pub fn entries<'b>(&'b self) -> impl ExactSizeIterator<Item=Entry<'b>>  {
+    pub fn entries<'b>(&'b self) -> impl ExactSizeIterator<Item = Entry<'b>> {
         Entries {
             entries: unsafe {
-                slice::from_raw_parts(self.inner.entries,
-                                      self.inner.count as usize)
+                slice::from_raw_parts(self.inner.entries, self.inner.count as usize)
             },
             index: 0,
         }
@@ -57,8 +55,7 @@ impl<'a> Iterator for Entries<'a> {
             self.index += 1;
 
             Some(Entry::from_libexif(unsafe { mem::transmute(entry) }))
-        }
-        else {
+        } else {
             None
         }
     }
