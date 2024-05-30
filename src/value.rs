@@ -1,8 +1,7 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use bits::*;
-use internal::*;
+use crate::bits::*;
 use libc::{self, c_char};
 use libexif_sys::*;
 use std::ffi::CString;
@@ -151,7 +150,7 @@ fn extract_vec<T>(
     values.extend(
         raw_data
             .chunks(mem::size_of::<T>())
-            .map(|chunk| unsafe { get(chunk.as_ptr(), byte_order.to_libexif()) }),
+            .map(|chunk| unsafe { get(chunk.as_ptr(), byte_order.into()) }),
     );
     values
 }

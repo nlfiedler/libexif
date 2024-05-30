@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use bits::*;
-use content::Content;
-use internal::*;
+use crate::bits::*;
+use crate::content::Content;
+use crate::internal::*;
+use crate::loader::Loader;
 use libexif_sys::*;
-use loader::Loader;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -59,43 +59,39 @@ impl Data {
 
     /// Return the byte order in use by this EXIF data.
     pub fn byte_order(&self) -> ByteOrder {
-        ByteOrder::from_libexif(unsafe {
-            exif_data_get_byte_order(self.inner as *const _ as *mut _)
-        })
+        ByteOrder::from(unsafe { exif_data_get_byte_order(self.inner as *const _ as *mut _) })
     }
 
     /// Set the byte order used for this EXIF data.
     pub fn set_byte_order(&mut self, byte_order: ByteOrder) {
         unsafe {
-            exif_data_set_byte_order(self.inner, byte_order.to_libexif());
+            exif_data_set_byte_order(self.inner, byte_order.into());
         }
     }
 
     /// Return the encoding in use by this EXIF data.
     pub fn encoding(&self) -> DataEncoding {
-        DataEncoding::from_libexif(unsafe {
-            exif_data_get_data_type(self.inner as *const _ as *mut _)
-        })
+        DataEncoding::from(unsafe { exif_data_get_data_type(self.inner as *const _ as *mut _) })
     }
 
     /// Set the encoding used for this EXIF data.
     pub fn set_encoding(&mut self, encoding: DataEncoding) {
         unsafe {
-            exif_data_set_data_type(self.inner, encoding.to_libexif());
+            exif_data_set_data_type(self.inner, encoding.into());
         }
     }
 
     /// Enable a data processing option.
     pub fn set_option(&mut self, option: DataOption) {
         unsafe {
-            exif_data_set_option(self.inner, option.to_libexif());
+            exif_data_set_option(self.inner, option.into());
         }
     }
 
     /// Disable a data processing option.
     pub fn unset_option(&mut self, option: DataOption) {
         unsafe {
-            exif_data_unset_option(self.inner, option.to_libexif());
+            exif_data_unset_option(self.inner, option.into());
         }
     }
 

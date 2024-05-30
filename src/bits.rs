@@ -1,7 +1,6 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use internal::*;
 use libexif_sys::*;
 
 /// Defines the byte order of binary values.
@@ -18,8 +17,8 @@ pub enum ByteOrder {
     LittleEndian,
 }
 
-impl FromLibExif<ExifByteOrder> for ByteOrder {
-    fn from_libexif(byte_order: ExifByteOrder) -> Self {
+impl From<ExifByteOrder> for ByteOrder {
+    fn from(byte_order: ExifByteOrder) -> Self {
         match byte_order {
             ExifByteOrder_EXIF_BYTE_ORDER_MOTOROLA => ByteOrder::BigEndian,
             ExifByteOrder_EXIF_BYTE_ORDER_INTEL => ByteOrder::LittleEndian,
@@ -28,9 +27,9 @@ impl FromLibExif<ExifByteOrder> for ByteOrder {
     }
 }
 
-impl ToLibExif<ExifByteOrder> for ByteOrder {
-    fn to_libexif(&self) -> ExifByteOrder {
-        match *self {
+impl Into<ExifByteOrder> for ByteOrder {
+    fn into(self) -> ExifByteOrder {
+        match self {
             ByteOrder::BigEndian => ExifByteOrder_EXIF_BYTE_ORDER_MOTOROLA,
             ByteOrder::LittleEndian => ExifByteOrder_EXIF_BYTE_ORDER_INTEL,
         }
@@ -47,8 +46,8 @@ pub enum DataEncoding {
     Unknown,
 }
 
-impl FromLibExif<ExifDataType> for DataEncoding {
-    fn from_libexif(data_type: ExifDataType) -> Self {
+impl From<ExifDataType> for DataEncoding {
+    fn from(data_type: ExifDataType) -> Self {
         match data_type {
             ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_CHUNKY => DataEncoding::Chunky,
             ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_PLANAR => DataEncoding::Planar,
@@ -60,9 +59,9 @@ impl FromLibExif<ExifDataType> for DataEncoding {
     }
 }
 
-impl ToLibExif<ExifDataType> for DataEncoding {
-    fn to_libexif(&self) -> ExifDataType {
-        match *self {
+impl Into<ExifDataType> for DataEncoding {
+    fn into(self) -> ExifDataType {
+        match self {
             DataEncoding::Chunky => ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_CHUNKY,
             DataEncoding::Planar => ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_PLANAR,
             DataEncoding::Ycc => ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_YCC,
@@ -83,8 +82,8 @@ pub enum DataOption {
     DontChangeMakerNote,
 }
 
-impl FromLibExif<ExifDataOption> for DataOption {
-    fn from_libexif(data_option: ExifDataOption) -> Self {
+impl From<ExifDataOption> for DataOption {
+    fn from(data_option: ExifDataOption) -> Self {
         match data_option {
             ExifDataOption_EXIF_DATA_OPTION_IGNORE_UNKNOWN_TAGS => DataOption::IgnoreUnknownTags,
             ExifDataOption_EXIF_DATA_OPTION_FOLLOW_SPECIFICATION => DataOption::FollowSpecification,
@@ -96,9 +95,9 @@ impl FromLibExif<ExifDataOption> for DataOption {
     }
 }
 
-impl ToLibExif<ExifDataOption> for DataOption {
-    fn to_libexif(&self) -> ExifDataOption {
-        match *self {
+impl Into<ExifDataOption> for DataOption {
+    fn into(self) -> ExifDataOption {
+        match self {
             DataOption::IgnoreUnknownTags => ExifDataOption_EXIF_DATA_OPTION_IGNORE_UNKNOWN_TAGS,
             DataOption::FollowSpecification => ExifDataOption_EXIF_DATA_OPTION_FOLLOW_SPECIFICATION,
             DataOption::DontChangeMakerNote => {
@@ -135,12 +134,12 @@ pub enum DataType {
 
 impl DataType {
     pub(crate) fn size(&self) -> usize {
-        unsafe { exif_format_get_size(self.to_libexif()) as usize }
+        unsafe { exif_format_get_size((*self).into()) as usize }
     }
 }
 
-impl FromLibExif<ExifFormat> for DataType {
-    fn from_libexif(format: ExifFormat) -> Self {
+impl From<ExifFormat> for DataType {
+    fn from(format: ExifFormat) -> Self {
         match format {
             ExifFormat_EXIF_FORMAT_ASCII => DataType::Text,
             ExifFormat_EXIF_FORMAT_BYTE => DataType::U8,
@@ -156,9 +155,9 @@ impl FromLibExif<ExifFormat> for DataType {
     }
 }
 
-impl ToLibExif<ExifFormat> for DataType {
-    fn to_libexif(&self) -> ExifFormat {
-        match *self {
+impl Into<ExifFormat> for DataType {
+    fn into(self) -> ExifFormat {
+        match self {
             DataType::Text => ExifFormat_EXIF_FORMAT_ASCII,
             DataType::U8 => ExifFormat_EXIF_FORMAT_BYTE,
             DataType::I8 => ExifFormat_EXIF_FORMAT_SBYTE,
@@ -190,8 +189,8 @@ pub enum IFD {
     Interoperability,
 }
 
-impl FromLibExif<ExifIfd> for IFD {
-    fn from_libexif(ifd: ExifIfd) -> Self {
+impl From<ExifIfd> for IFD {
+    fn from(ifd: ExifIfd) -> Self {
         match ifd {
             ExifIfd_EXIF_IFD_0 => IFD::Image,
             ExifIfd_EXIF_IFD_1 => IFD::Thumbnail,
@@ -203,9 +202,9 @@ impl FromLibExif<ExifIfd> for IFD {
     }
 }
 
-impl ToLibExif<ExifIfd> for IFD {
-    fn to_libexif(&self) -> ExifIfd {
-        match *self {
+impl Into<ExifIfd> for IFD {
+    fn into(self) -> ExifIfd {
+        match self {
             IFD::Image => ExifIfd_EXIF_IFD_0,
             IFD::Thumbnail => ExifIfd_EXIF_IFD_1,
             IFD::EXIF => ExifIfd_EXIF_IFD_EXIF,
@@ -228,8 +227,8 @@ pub enum SupportLevel {
     Unknown,
 }
 
-impl FromLibExif<ExifSupportLevel> for SupportLevel {
-    fn from_libexif(support_level: ExifSupportLevel) -> Self {
+impl From<ExifSupportLevel> for SupportLevel {
+    fn from(support_level: ExifSupportLevel) -> Self {
         match support_level {
             ExifSupportLevel_EXIF_SUPPORT_LEVEL_MANDATORY => SupportLevel::Required,
             ExifSupportLevel_EXIF_SUPPORT_LEVEL_OPTIONAL => SupportLevel::Optional,
@@ -240,9 +239,9 @@ impl FromLibExif<ExifSupportLevel> for SupportLevel {
     }
 }
 
-impl ToLibExif<ExifSupportLevel> for SupportLevel {
-    fn to_libexif(&self) -> ExifSupportLevel {
-        match *self {
+impl Into<ExifSupportLevel> for SupportLevel {
+    fn into(self) -> ExifSupportLevel {
+        match self {
             SupportLevel::Required => ExifSupportLevel_EXIF_SUPPORT_LEVEL_MANDATORY,
             SupportLevel::Optional => ExifSupportLevel_EXIF_SUPPORT_LEVEL_OPTIONAL,
             SupportLevel::NotAllowed => ExifSupportLevel_EXIF_SUPPORT_LEVEL_NOT_RECORDED,

@@ -11,4 +11,4 @@ The `libexif` crate provides a safe wrapper around the native `libexif` C librar
 
 ## License
 
-While this crate is distributed under the [MIT License](LICENSE), the underlying [libexif](https://libexif.github.io) C library is licensed under the [LGPL version 2.1](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html#TOC1).
+While this crate is distributed under the [MIT License](LICENSE), the underlying [libexif](https://libexif.github.io) C library is licensed under the [LGPL version 2.1](http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html).

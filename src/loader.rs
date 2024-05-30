@@ -1,8 +1,8 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use data::Data;
-use internal::*;
+use crate::data::Data;
+use crate::internal::*;
 use libc::c_uint;
 use libexif_sys::*;
 

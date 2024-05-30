@@ -1,14 +1,14 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use bits::*;
-use internal::*;
+use crate::bits::*;
+use crate::internal::*;
+use crate::tag::Tag;
+use crate::value::Value;
 use libc::{self, c_char, c_uint};
 use libexif_sys::*;
 use std::ffi::CString;
 use std::slice;
-use tag::Tag;
-use value::Value;
 
 /// Data found in a single EXIF tag.
 pub struct Entry<'a> {
@@ -24,12 +24,12 @@ impl<'a> FromLibExif<&'a mut ExifEntry> for Entry<'a> {
 impl<'a> Entry<'a> {
     /// EXIF tag for the entry.
     pub fn tag(&self) -> Tag {
-        Tag::from_libexif(self.inner.tag)
+        Tag::from(self.inner.tag)
     }
 
     /// Type of data contained in the entry.
     pub fn data_type(&self) -> DataType {
-        DataType::from_libexif(self.inner.format)
+        DataType::from(self.inner.format)
     }
 
     /// Number of data elements in the entry.

@@ -1,9 +1,9 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-use bits::*;
-use entry::Entry;
-use internal::*;
+use crate::bits::*;
+use crate::entry::Entry;
+use crate::internal::*;
 use libexif_sys::*;
 use std::mem;
 use std::slice;
@@ -16,7 +16,7 @@ pub struct Content<'a> {
 impl<'a> Content<'a> {
     /// Return the IFD for the content.
     pub fn ifd(&self) -> IFD {
-        IFD::from_libexif(unsafe { exif_content_get_ifd(self.inner as *const _ as *mut _) })
+        IFD::from(unsafe { exif_content_get_ifd(self.inner as *const _ as *mut _) })
     }
 
     /// Return the number of [entries](struct.Entry.html) in the IFD.
