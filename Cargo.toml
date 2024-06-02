@@ -16,3 +16,4 @@ keywords = ["libexif", "exif", "image"]
 [dependencies]
 libexif-sys = { git = "https://github.com/nlfiedler/libexif-sys.git" }
 libc = "0.2"
+thiserror = "1.0.61"

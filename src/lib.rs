@@ -3,8 +3,8 @@
 //
 //! The `libexif` crate provides a safe wrapper around the `libexif` C library.
 //! It provides the ability to read EXIF data from image files. Note that the
-//! API provided by this crate is fairly low-level, you may find that
-//! kamadak-exif is easier to use in most cases.
+//! API provided by this crate is fairly low-level, as such you may find that
+//! the kamadak-exif crate is easier to use in most cases.
 //!
 //! The entry point for inspecting a file's EXIF data is
 //! [`Data::open()`](struct.Data.html#method.open). EXIF data can be inspected
@@ -17,11 +17,13 @@
 //! fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
 //!     let data = libexif::Data::open("image.jpg")?;
 //!     for content in data.contents() {
+//!         let ifd = content.ifd().unwrap();
 //!         println!("[{:=>32}{:=>46}]", format!(" {:?} ", content.ifd()), "");
 //!         for entry in content.entries() {
-//!             println!("  {:<30} = {}",
-//!                      entry.tag().title(content.ifd()),
-//!                      entry.text_value());
+//!             let tag = entry.tag();
+//!             let title = tag.title(ifd).unwrap_or("error");
+//!             let value = entry.text_value().unwrap_or("error".into());
+//!             println!("  {:<30} = {}", title, value);
 //!         }
 //!     }
 //!     Ok(())
@@ -32,6 +34,23 @@
 
 extern crate libc;
 extern crate libexif_sys;
+
+///
+/// Various types of errors that may occur while reading EXIF data.
+///
+#[derive(Debug, thiserror::Error)]
+pub enum ExifError {
+    #[error("illegal byte order value")]
+    IllegalByteOrder,
+    #[error("illegal data type value")]
+    IllegalDataType,
+    #[error("illegal data option value")]
+    IllegalDataOption,
+    #[error("illegal support level value")]
+    IllegalSupportLevel,
+    #[error("unknown IFD value")]
+    UnknownIFD,
+}
 
 pub use bits::*;
 pub use content::*;
@@ -60,7 +79,7 @@ mod tests {
         let data = Data::open("tests/fixtures/f2t.jpg")?;
         // this image contains several empty contents in this order
         let ifds = vec![IFD::Thumbnail, IFD::GPS, IFD::Interoperability];
-        let mut expected_ifds = ifds.iter();
+        let mut ifds_iterator = ifds.iter();
         for content in data.contents() {
             // find the contents that are empty and ensure that none of the
             // member functions panic
@@ -68,8 +87,8 @@ mod tests {
                 let (size, maybe_size) = content.entries().size_hint();
                 assert_eq!(size, 0);
                 assert_eq!(maybe_size, Some(0));
-                let ifd = content.ifd();
-                assert_eq!(&ifd, expected_ifds.next().unwrap());
+                let ifd = content.ifd().unwrap();
+                assert_eq!(&ifd, ifds_iterator.next().unwrap());
             }
         }
         Ok(())
@@ -78,12 +97,12 @@ mod tests {
     #[test]
     fn test_get_orientation() -> io::Result<()> {
         let data = Data::open("tests/fixtures/f2t.jpg")?;
-        let byte_order = data.byte_order();
+        let byte_order = data.byte_order().unwrap();
         for content in data.contents() {
             for entry in content.entries() {
                 // Orientation is 274
                 if entry.tag().code() == 274 {
-                    match entry.value(byte_order) {
+                    match entry.value(byte_order).unwrap() {
                         Value::U16(v) => println!("v: {:?}", v),
                         _ => panic!("wrong type of value"),
                     }

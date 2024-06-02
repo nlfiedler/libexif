@@ -17,12 +17,14 @@ pub enum ByteOrder {
     LittleEndian,
 }
 
-impl From<ExifByteOrder> for ByteOrder {
-    fn from(byte_order: ExifByteOrder) -> Self {
+impl TryFrom<ExifByteOrder> for ByteOrder {
+    type Error = super::ExifError;
+
+    fn try_from(byte_order: ExifByteOrder) -> Result<Self, Self::Error> {
         match byte_order {
-            ExifByteOrder_EXIF_BYTE_ORDER_MOTOROLA => ByteOrder::BigEndian,
-            ExifByteOrder_EXIF_BYTE_ORDER_INTEL => ByteOrder::LittleEndian,
-            _ => panic!("illegal byte order value"),
+            ExifByteOrder_EXIF_BYTE_ORDER_MOTOROLA => Ok(ByteOrder::BigEndian),
+            ExifByteOrder_EXIF_BYTE_ORDER_INTEL => Ok(ByteOrder::LittleEndian),
+            _ => Err(super::ExifError::IllegalByteOrder),
         }
     }
 }
@@ -46,15 +48,17 @@ pub enum DataEncoding {
     Unknown,
 }
 
-impl From<ExifDataType> for DataEncoding {
-    fn from(data_type: ExifDataType) -> Self {
+impl TryFrom<ExifDataType> for DataEncoding {
+    type Error = super::ExifError;
+
+    fn try_from(data_type: ExifDataType) -> Result<Self, Self::Error> {
         match data_type {
-            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_CHUNKY => DataEncoding::Chunky,
-            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_PLANAR => DataEncoding::Planar,
-            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_YCC => DataEncoding::Ycc,
-            ExifDataType_EXIF_DATA_TYPE_COMPRESSED => DataEncoding::Compressed,
-            ExifDataType_EXIF_DATA_TYPE_UNKNOWN => DataEncoding::Unknown,
-            _ => panic!("illegal data type value"),
+            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_CHUNKY => Ok(DataEncoding::Chunky),
+            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_PLANAR => Ok(DataEncoding::Planar),
+            ExifDataType_EXIF_DATA_TYPE_UNCOMPRESSED_YCC => Ok(DataEncoding::Ycc),
+            ExifDataType_EXIF_DATA_TYPE_COMPRESSED => Ok(DataEncoding::Compressed),
+            ExifDataType_EXIF_DATA_TYPE_UNKNOWN => Ok(DataEncoding::Unknown),
+            _ => Err(super::ExifError::IllegalDataType),
         }
     }
 }
@@ -82,15 +86,21 @@ pub enum DataOption {
     DontChangeMakerNote,
 }
 
-impl From<ExifDataOption> for DataOption {
-    fn from(data_option: ExifDataOption) -> Self {
+impl TryFrom<ExifDataOption> for DataOption {
+    type Error = super::ExifError;
+
+    fn try_from(data_option: ExifDataOption) -> Result<Self, Self::Error> {
         match data_option {
-            ExifDataOption_EXIF_DATA_OPTION_IGNORE_UNKNOWN_TAGS => DataOption::IgnoreUnknownTags,
-            ExifDataOption_EXIF_DATA_OPTION_FOLLOW_SPECIFICATION => DataOption::FollowSpecification,
-            ExifDataOption_EXIF_DATA_OPTION_DONT_CHANGE_MAKER_NOTE => {
-                DataOption::DontChangeMakerNote
+            ExifDataOption_EXIF_DATA_OPTION_IGNORE_UNKNOWN_TAGS => {
+                Ok(DataOption::IgnoreUnknownTags)
             }
-            _ => panic!("illegal data option value"),
+            ExifDataOption_EXIF_DATA_OPTION_FOLLOW_SPECIFICATION => {
+                Ok(DataOption::FollowSpecification)
+            }
+            ExifDataOption_EXIF_DATA_OPTION_DONT_CHANGE_MAKER_NOTE => {
+                Ok(DataOption::DontChangeMakerNote)
+            }
+            _ => Err(super::ExifError::IllegalDataOption),
         }
     }
 }
@@ -138,19 +148,22 @@ impl DataType {
     }
 }
 
-impl From<ExifFormat> for DataType {
-    fn from(format: ExifFormat) -> Self {
+impl TryFrom<ExifFormat> for DataType {
+    type Error = super::ExifError;
+
+    fn try_from(format: ExifFormat) -> Result<Self, Self::Error> {
         match format {
-            ExifFormat_EXIF_FORMAT_ASCII => DataType::Text,
-            ExifFormat_EXIF_FORMAT_BYTE => DataType::U8,
-            ExifFormat_EXIF_FORMAT_SBYTE => DataType::I8,
-            ExifFormat_EXIF_FORMAT_SHORT => DataType::U16,
-            ExifFormat_EXIF_FORMAT_SSHORT => DataType::I16,
-            ExifFormat_EXIF_FORMAT_LONG => DataType::U32,
-            ExifFormat_EXIF_FORMAT_SLONG => DataType::I32,
-            ExifFormat_EXIF_FORMAT_RATIONAL => DataType::URational,
-            ExifFormat_EXIF_FORMAT_SRATIONAL => DataType::IRational,
-            _ => DataType::Undefined,
+            ExifFormat_EXIF_FORMAT_ASCII => Ok(DataType::Text),
+            ExifFormat_EXIF_FORMAT_BYTE => Ok(DataType::U8),
+            ExifFormat_EXIF_FORMAT_SBYTE => Ok(DataType::I8),
+            ExifFormat_EXIF_FORMAT_SHORT => Ok(DataType::U16),
+            ExifFormat_EXIF_FORMAT_SSHORT => Ok(DataType::I16),
+            ExifFormat_EXIF_FORMAT_LONG => Ok(DataType::U32),
+            ExifFormat_EXIF_FORMAT_SLONG => Ok(DataType::I32),
+            ExifFormat_EXIF_FORMAT_RATIONAL => Ok(DataType::URational),
+            ExifFormat_EXIF_FORMAT_SRATIONAL => Ok(DataType::IRational),
+            ExifFormat_EXIF_FORMAT_UNDEFINED => Ok(DataType::Undefined),
+            _ => Err(super::ExifError::IllegalDataType)
         }
     }
 }
@@ -189,15 +202,17 @@ pub enum IFD {
     Interoperability,
 }
 
-impl From<ExifIfd> for IFD {
-    fn from(ifd: ExifIfd) -> Self {
+impl TryFrom<ExifIfd> for IFD {
+    type Error = super::ExifError;
+
+    fn try_from(ifd: ExifIfd) -> Result<Self, Self::Error> {
         match ifd {
-            ExifIfd_EXIF_IFD_0 => IFD::Image,
-            ExifIfd_EXIF_IFD_1 => IFD::Thumbnail,
-            ExifIfd_EXIF_IFD_EXIF => IFD::EXIF,
-            ExifIfd_EXIF_IFD_GPS => IFD::GPS,
-            ExifIfd_EXIF_IFD_INTEROPERABILITY => IFD::Interoperability,
-            _ => panic!("unknonw ifd value"),
+            ExifIfd_EXIF_IFD_0 => Ok(IFD::Image),
+            ExifIfd_EXIF_IFD_1 => Ok(IFD::Thumbnail),
+            ExifIfd_EXIF_IFD_EXIF => Ok(IFD::EXIF),
+            ExifIfd_EXIF_IFD_GPS => Ok(IFD::GPS),
+            ExifIfd_EXIF_IFD_INTEROPERABILITY => Ok(IFD::Interoperability),
+            _ => Err(super::ExifError::UnknownIFD),
         }
     }
 }
@@ -227,14 +242,16 @@ pub enum SupportLevel {
     Unknown,
 }
 
-impl From<ExifSupportLevel> for SupportLevel {
-    fn from(support_level: ExifSupportLevel) -> Self {
+impl TryFrom<ExifSupportLevel> for SupportLevel {
+    type Error = super::ExifError;
+
+    fn try_from(support_level: ExifSupportLevel) -> Result<Self, Self::Error> {
         match support_level {
-            ExifSupportLevel_EXIF_SUPPORT_LEVEL_MANDATORY => SupportLevel::Required,
-            ExifSupportLevel_EXIF_SUPPORT_LEVEL_OPTIONAL => SupportLevel::Optional,
-            ExifSupportLevel_EXIF_SUPPORT_LEVEL_NOT_RECORDED => SupportLevel::NotAllowed,
-            ExifSupportLevel_EXIF_SUPPORT_LEVEL_UNKNOWN => SupportLevel::Unknown,
-            _ => panic!("illegal support level value"),
+            ExifSupportLevel_EXIF_SUPPORT_LEVEL_MANDATORY => Ok(SupportLevel::Required),
+            ExifSupportLevel_EXIF_SUPPORT_LEVEL_OPTIONAL => Ok(SupportLevel::Optional),
+            ExifSupportLevel_EXIF_SUPPORT_LEVEL_NOT_RECORDED => Ok(SupportLevel::NotAllowed),
+            ExifSupportLevel_EXIF_SUPPORT_LEVEL_UNKNOWN => Ok(SupportLevel::Unknown),
+            _ => Err(super::ExifError::IllegalSupportLevel),
         }
     }
 }

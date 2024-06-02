@@ -15,14 +15,15 @@ fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
     println!("  Byte Order: {:?}", data.byte_order());
 
     for content in data.contents() {
+        let ifd = content.ifd().expect("invalid IFD");
         if content.len() > 0 {
             println!("[{:=>31}{:=>46}]", format!(" {:?} ", content.ifd()), "");
 
             for entry in content.entries() {
                 println!(
                     " {:<30} = {}",
-                    entry.tag().title(content.ifd()),
-                    entry.text_value()
+                    entry.tag().title(ifd).unwrap_or("error"),
+                    entry.text_value().unwrap_or("error".into())
                 );
             }
         }

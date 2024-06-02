@@ -8,6 +8,7 @@ use crate::value::Value;
 use libc::{self, c_char, c_uint};
 use libexif_sys::*;
 use std::ffi::CString;
+use std::ffi::IntoStringError;
 use std::slice;
 
 /// Data found in a single EXIF tag.
@@ -28,8 +29,8 @@ impl<'a> Entry<'a> {
     }
 
     /// Type of data contained in the entry.
-    pub fn data_type(&self) -> DataType {
-        DataType::from(self.inner.format)
+    pub fn data_type(&self) -> Result<DataType, super::ExifError> {
+        DataType::try_from(self.inner.format)
     }
 
     /// Number of data elements in the entry.
@@ -43,17 +44,18 @@ impl<'a> Entry<'a> {
     }
 
     /// Returns an interpreted value of the entry's data.
-    pub fn value(&self, byte_order: ByteOrder) -> Value {
-        Value::extract(
+    pub fn value(&self, byte_order: ByteOrder) -> Result<Value, super::ExifError> {
+        let data_type = self.data_type()?;
+        Ok(Value::extract(
             self.raw_data(),
-            self.data_type(),
+            data_type,
             self.components(),
             byte_order,
-        )
+        ))
     }
 
     /// Returns a textual representation of the entry's data.
-    pub fn text_value(&self) -> String {
+    pub fn text_value(&self) -> Result<String, IntoStringError> {
         let mut buffer = Vec::<u8>::with_capacity(256);
         let cstring = unsafe {
             let len = libc::strlen(exif_entry_get_value(
@@ -64,6 +66,6 @@ impl<'a> Entry<'a> {
             buffer.set_len(len);
             CString::from_vec_unchecked(buffer)
         };
-        cstring.into_string().expect("invalid UTF-8")
+        cstring.into_string()
     }
 }
