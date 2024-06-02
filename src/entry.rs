@@ -29,7 +29,7 @@ impl<'a> Entry<'a> {
     }
 
     /// Type of data contained in the entry.
-    pub fn data_type(&self) -> Result<DataType, super::ExifError> {
+    pub fn data_type(&self) -> Result<DataType, super::Error> {
         DataType::try_from(self.inner.format)
     }
 
@@ -44,7 +44,7 @@ impl<'a> Entry<'a> {
     }
 
     /// Returns an interpreted value of the entry's data.
-    pub fn value(&self, byte_order: ByteOrder) -> Result<Value, super::ExifError> {
+    pub fn value(&self, byte_order: ByteOrder) -> Result<Value, super::Error> {
         let data_type = self.data_type()?;
         Ok(Value::extract(
             self.raw_data(),

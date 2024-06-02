@@ -15,7 +15,7 @@ pub struct Content<'a> {
 
 impl<'a> Content<'a> {
     /// Return the IFD for the content.
-    pub fn ifd(&self) -> Result<IFD, super::ExifError> {
+    pub fn ifd(&self) -> Result<IFD, super::Error> {
         IFD::try_from(unsafe { exif_content_get_ifd(self.inner as *const _ as *mut _) })
     }
 

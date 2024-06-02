@@ -53,7 +53,7 @@ impl Tag {
         &self,
         ifd: IFD,
         encoding: DataEncoding,
-    ) -> Result<SupportLevel, super::ExifError> {
+    ) -> Result<SupportLevel, super::Error> {
         let support_level =
             unsafe { exif_tag_get_support_level_in_ifd(self.inner, ifd.into(), encoding.into()) };
         SupportLevel::try_from(support_level)

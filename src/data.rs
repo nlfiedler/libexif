@@ -58,7 +58,7 @@ impl Data {
     }
 
     /// Return the byte order in use by this EXIF data.
-    pub fn byte_order(&self) -> Result<ByteOrder, super::ExifError> {
+    pub fn byte_order(&self) -> Result<ByteOrder, super::Error> {
         ByteOrder::try_from(unsafe { exif_data_get_byte_order(self.inner as *const _ as *mut _) })
     }
 
@@ -70,7 +70,7 @@ impl Data {
     }
 
     /// Return the encoding in use by this EXIF data.
-    pub fn encoding(&self) -> Result<DataEncoding, super::ExifError> {
+    pub fn encoding(&self) -> Result<DataEncoding, super::Error> {
         DataEncoding::try_from(unsafe { exif_data_get_data_type(self.inner as *const _ as *mut _) })
     }
 

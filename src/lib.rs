@@ -40,7 +40,7 @@ extern crate libexif_sys;
 /// Various types of errors that may occur while reading EXIF data.
 ///
 #[derive(Debug, thiserror::Error)]
-pub enum ExifError {
+pub enum Error {
     #[error("illegal byte order value")]
     IllegalByteOrder,
     #[error("illegal data type value")]
