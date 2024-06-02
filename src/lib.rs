@@ -1,9 +1,12 @@
 //
 // Copyright (c) 2016 David Cuddeback
 //
-//! The `exif` crate provides a safe wrapper around the `libexif` C library. It
-//! provides the ability to read EXIF data from image files. The entry point for
-//! inspecting a file's EXIF data is
+//! The `libexif` crate provides a safe wrapper around the `libexif` C library.
+//! It provides the ability to read EXIF data from image files. Note that the
+//! API provided by this crate is fairly low-level, you may find that
+//! kamadak-exif is easier to use in most cases.
+//!
+//! The entry point for inspecting a file's EXIF data is
 //! [`Data::open()`](struct.Data.html#method.open). EXIF data can be inspected
 //! by iterating over the data's [`contents`](struct.Content.html) and
 //! [`entries`](struct.Entry.html):
@@ -46,3 +49,47 @@ mod entry;
 mod loader;
 mod tag;
 mod value;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io;
+
+    #[test]
+    fn test_empty_content() -> io::Result<()> {
+        let data = Data::open("tests/fixtures/f2t.jpg")?;
+        // this image contains several empty contents in this order
+        let ifds = vec![IFD::Thumbnail, IFD::GPS, IFD::Interoperability];
+        let mut expected_ifds = ifds.iter();
+        for content in data.contents() {
+            // find the contents that are empty and ensure that none of the
+            // member functions panic
+            if content.len() == 0 {
+                let (size, maybe_size) = content.entries().size_hint();
+                assert_eq!(size, 0);
+                assert_eq!(maybe_size, Some(0));
+                let ifd = content.ifd();
+                assert_eq!(&ifd, expected_ifds.next().unwrap());
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn test_get_orientation() -> io::Result<()> {
+        let data = Data::open("tests/fixtures/f2t.jpg")?;
+        let byte_order = data.byte_order();
+        for content in data.contents() {
+            for entry in content.entries() {
+                // Orientation is 274
+                if entry.tag().code() == 274 {
+                    match entry.value(byte_order) {
+                        Value::U16(v) => println!("v: {:?}", v),
+                        _ => panic!("wrong type of value"),
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+}

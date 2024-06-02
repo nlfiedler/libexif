@@ -17,6 +17,11 @@ impl From<ExifTag> for Tag {
 }
 
 impl Tag {
+    /// Return the tag code (e.g. 274 for Orientation).
+    pub fn code(&self) -> u32 {
+        self.inner
+    }
+
     /// The name of the EXIF tag when found in the given IFD.
     pub fn name(&self, ifd: IFD) -> &'static str {
         let ptr = unsafe { exif_tag_get_name_in_ifd(self.inner, ifd.into()) };

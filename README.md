@@ -4,8 +4,6 @@ The `libexif` crate provides a safe wrapper around the native `libexif` C librar
 
 ## Dependencies
 
-Because this crate depends on `libexif-sys`, which involves building a C library, there are some additional requirements beyond having the Rust toolchain installed.
-
 * [Rust](https://www.rust-lang.org) stable (2021 edition, version 1.70 or higher)
 * [libexif](https://libexif.github.io) (version 0.6.22)
 * [Clang](https://clang.llvm.org) (version 5.0 or higher, as dictated by [rust-bindgen](https://github.com/rust-lang/rust-bindgen))

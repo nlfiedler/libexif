@@ -26,11 +26,18 @@ impl<'a> Content<'a> {
 
     /// Iterate over the [entries](struct.Entry.html) in the IFD.
     pub fn entries<'b>(&'b self) -> impl ExactSizeIterator<Item = Entry<'b>> {
-        Entries {
-            entries: unsafe {
-                slice::from_raw_parts(self.inner.entries, self.inner.count as usize)
-            },
-            index: 0,
+        if self.len() == 0 {
+            Entries {
+                entries: &[],
+                index: 0,
+            }
+        } else {
+            Entries {
+                entries: unsafe {
+                    slice::from_raw_parts(self.inner.entries, self.inner.count as usize)
+                },
+                index: 0,
+            }
         }
     }
 }
@@ -53,7 +60,6 @@ impl<'a> Iterator for Entries<'a> {
         if self.index < self.entries.len() {
             let entry = self.entries[self.index];
             self.index += 1;
-
             Some(Entry::from_libexif(unsafe { mem::transmute(entry) }))
         } else {
             None
@@ -62,7 +68,6 @@ impl<'a> Iterator for Entries<'a> {
 
     fn size_hint(&self) -> (usize, Option<usize>) {
         let remaining = self.entries.len() - self.index;
-
         (remaining, Some(remaining))
     }
 }
