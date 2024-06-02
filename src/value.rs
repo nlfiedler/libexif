@@ -10,9 +10,10 @@ use std::mem;
 
 /// A rational number consisting of a numerator and denominator.
 ///
-/// A rational number is any number that can be represented as a fraction of two whole numbers,
-/// e.g., 42/100. A `Rational` is a tuple struct containing the fraction's numerator as its first
-/// element and the fraction's denominator as its second element.
+/// A rational number is any number that can be represented as a fraction of two
+/// whole numbers, such as 42/100. A `Rational` is a tuple struct containing the
+/// fraction's numerator as its first element and the fraction's denominator as
+/// its second element.
 ///
 /// # Example
 ///
@@ -47,9 +48,10 @@ impl<T: Display + Copy> Display for Rational<T> {
 
 /// Dynamic value for an EXIF tag.
 ///
-/// Each variant of `Value` corresponds to a variant of [`DataType`](enum.DataType.html). Each
-/// variant (except for `Text`) contains a `Vec` with a length equal to the number of components in
-/// the corresponding [`Entry`](struct.Entry.html).
+/// Each variant of `Value` corresponds to a variant of
+/// [`DataType`](enum.DataType.html). Each variant (except for `Text`) contains
+/// a `Vec` with a length equal to the number of components in the corresponding
+/// [`Entry`](struct.Entry.html).
 #[derive(Debug, Clone)]
 pub enum Value {
     /// Value interpreted as a string.

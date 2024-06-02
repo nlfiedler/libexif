@@ -17,7 +17,7 @@ impl From<ExifTag> for Tag {
 }
 
 impl Tag {
-    /// Return the tag code (e.g. 274 for Orientation).
+    /// Return the tag code (for example, 274 for Orientation).
     pub fn code(&self) -> u32 {
         self.inner
     }

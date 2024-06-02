@@ -4,7 +4,8 @@
 //! The `libexif` crate provides a safe wrapper around the `libexif` C library.
 //! It provides the ability to read EXIF data from image files. Note that the
 //! API provided by this crate is fairly low-level, as such you may find that
-//! the kamadak-exif crate is easier to use in most cases.
+//! the [kamadak-exif](https://crates.io/crates/kamadak-exif) crate is easier to
+//! use in most cases.
 //!
 //! The entry point for inspecting a file's EXIF data is
 //! [`Data::open()`](struct.Data.html#method.open). EXIF data can be inspected
@@ -15,7 +16,7 @@
 //! # use std::io;
 //! # use std::path::Path;
 //! fn dump_exif<P: AsRef<Path>>(file_name: P) -> io::Result<()> {
-//!     let data = libexif::Data::open("image.jpg")?;
+//!     let data = libexif::Data::open(file_name)?;
 //!     for content in data.contents() {
 //!         let ifd = content.ifd().unwrap();
 //!         println!("[{:=>32}{:=>46}]", format!(" {:?} ", content.ifd()), "");
@@ -91,6 +92,7 @@ mod tests {
                 assert_eq!(&ifd, ifds_iterator.next().unwrap());
             }
         }
+        assert!(ifds_iterator.next().is_none());
         Ok(())
     }
 
@@ -98,6 +100,7 @@ mod tests {
     fn test_get_orientation() -> io::Result<()> {
         let data = Data::open("tests/fixtures/f2t.jpg")?;
         let byte_order = data.byte_order().unwrap();
+        assert_eq!(byte_order, ByteOrder::LittleEndian);
         for content in data.contents() {
             for entry in content.entries() {
                 // Orientation is 274
